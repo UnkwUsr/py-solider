@@ -19,7 +19,7 @@ class Map:
         return MapIterator(self)
 
     def reset(self):
-        self.map = [[Block.EMPTY for y in range(self.height)] for x in range(self.width)]
+        self.map = [[Block.EMPTY for x in range(self.width)] for y in range(self.height)]
 
     def set(self, pos, block):
         self.map[pos.y][pos.x] = block

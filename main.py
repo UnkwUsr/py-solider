@@ -5,8 +5,8 @@ from Game.Pos import Pos
 from Bot.Bot import Bot
 
 
-WIDTH=4
-HEIGHT=4
+WIDTH=5
+HEIGHT=5
 
 pyxel.init(WIDTH, HEIGHT)
 
