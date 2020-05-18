@@ -6,14 +6,13 @@ def sigmoid(x):
 
 class Neuron:
     def __init__(self, inputs):
-        self.w = randfloat(0, 1)
-        self.inputs = inputs
+        self.ws = {x: randfloat(0, 1) for x in inputs}
         self.value = 0
 
-    def updateW(new_w):
-        self.w = new_w
+    # def updateW(new_w):
+        # self.w = new_w
 
     def activate(self):
-        summ = sum([(x.value * self.w) for x in self.inputs])
+        summ = sum([(n.value * self.ws[n]) for n in self.ws])
         self.value = sigmoid(summ)
 
