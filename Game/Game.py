@@ -10,6 +10,9 @@ from .Pos import Pos
 from .Map import Map
 from .Blocks import Block
 
+TEXT_YOU_DIED = "You died. Restart (default key r) for continue"
+TEXT_YOU_WINNED = "You winned. Please restart (default key r) for continue"
+
 class Solider:
     """Main game class"""
 
@@ -19,6 +22,8 @@ class Solider:
         self.restart()
 
     def restart(self):
+        self.isDied = False
+        self.isWinned = False
         self.game_map.reset()
         #with borders
         # self.pos = Pos(randint(1, map_width - 2), randint(1, map_height - 2))
@@ -27,24 +32,33 @@ class Solider:
 
 
     def move(self, direction):
-        if direction == "left":
-            self.pos.left()
-        if direction == "right":
-            self.pos.right()
-        if direction == "down":
-            self.pos.down()
-        if direction == "up":
-            self.pos.up()
+        if self.isDied:
+            print(TEXT_YOU_DIED)
+            return
+        elif self.isWinned:
+            print(TEXT_YOU_WINNED)
+            return
 
-        if self.game_map.isSolid(self.pos):
-            print("You died")
-            self.restart()
+        new_pos = deepcopy(self.pos)
+        if direction == "left":
+            new_pos.left()
+        if direction == "right":
+            new_pos.right()
+        if direction == "down":
+            new_pos.down()
+        if direction == "up":
+            new_pos.up()
+
+        if self.game_map.isSolid(new_pos):
+            print(TEXT_YOU_DIED)
+            self.isDied = True
         else:
+            self.pos = deepcopy(new_pos)
             self.syncPlayer()
 
             if self.checkWin():
-                print("You win")
-                self.restart()
+                print(TEXT_YOU_WINNED)
+                self.isWinned = True
 
 
     def syncPlayer(self, init=False):

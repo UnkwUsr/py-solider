@@ -3,16 +3,26 @@ from random import uniform as randfloat
 
 def sigmoid(x):
     return 1 / (1 + np.exp(-x))
+def my_activator(x):
+    if x >= 1:
+        return x
+    else:
+        return 0
 
 class Neuron:
-    def __init__(self, inputs):
-        self.ws = {x: randfloat(0, 1) for x in inputs}
+    def __init__(self):
+        self.inputs_weights = {}
         self.value = 0
 
-    # def updateW(new_w):
-        # self.w = new_w
+    def getListWeights(self):
+        return self.ws
+    def setInputWeight(self, input_neuron, weight):
+        """ Can add new inputs and modify weight exsisting input"""
+        self.inputs_weights[input_neuron] = weight
 
-    def activate(self):
-        summ = sum([(n.value * self.ws[n]) for n in self.ws])
-        self.value = sigmoid(summ)
+    def getValue(self):
+        summ = sum([(n.getValue() * self.inputs_weights[n]) for n in self.inputs_weights])
+        # result = my_activator(summ)
+        result = summ
+        return result
 
