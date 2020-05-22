@@ -1,4 +1,3 @@
-
 import pyxel
 from Game.Game import Solider
 from Game.Pos import Pos
@@ -12,8 +11,15 @@ pyxel.init(WIDTH, HEIGHT)
 
 solider_game = Solider(WIDTH, HEIGHT)
 bot = Bot(solider_game)
+auto_bot = False
 
 def update():
+    global auto_bot
+    if pyxel.btnp(pyxel.KEY_A):
+        auto_bot = not auto_bot
+    if auto_bot:
+        bot.checkBot()
+
     if pyxel.btnp(pyxel.KEY_H):
         solider_game.move("left")
     if pyxel.btnp(pyxel.KEY_L):
