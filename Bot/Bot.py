@@ -42,6 +42,10 @@ class Bot:
     def checkBot(self):
         vis = self.getVision()
         vis_data = [vis[i] for i in vis]
+        # normalize vis
+        for i in range(len(vis_data)):
+            if vis_data[i] > 1:
+                vis_data[i] = 1
 
         network_solution = self.network.getSolution(vis_data)
         if network_solution == -1:
