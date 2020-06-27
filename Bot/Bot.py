@@ -3,6 +3,8 @@ from .Network import Network
 
 class Bot:
     def __init__(self, game):
+        self.stat = {'wins': 0, 'loses': 0, 'stucks': 0}
+
         self.game = game
         self.vision = Vision(game)
 
@@ -22,7 +24,6 @@ class Bot:
             print("Error. Count of network outputs was changed?")
             return
 
-        print("Doing move", move_name)
         self.game.move(move_name)
         if self.game.isDied:
             return -1
@@ -44,21 +45,40 @@ class Bot:
 
         network_solution = self.network.getSolution(vis_data)
         if network_solution == -1:
-            print("Nothing to do. Restarting")
-            self.game.restart()
+            # print("Bot say that no possible solutions. Restarting")
+
+            # be careful! map 5x5 has start-positions from that win not possible
+            self.stat['loses'] += 1
+            self.printStats()
+
+            # there need to be some training stuff
+
+            self.game.replay()
             return
 
         move_result = self.doMoveNum(network_solution)
 
-        # is winned
-        if move_result == 1:
+        # is continuing playing
+        if move_result == 0:
+            pass
+            # self.network.train(network_solution, True)
+        # is win
+        elif move_result == 1:
+            self.stat['wins'] += 1
+            self.printStats()
+
             self.network.train(network_solution, True)
             self.game.restart()
-        # is continuing playing
-        elif move_result == 0:
-            self.network.train(network_solution, True)
         # is died
         elif move_result == -1:
+            self.stat['loses'] += 1
+            self.printStats()
+
             self.network.train(network_solution, False)
-            self.game.restart()
+            self.game.replay()
+
+
+    def printStats(self):
+        print("Wins: " + str(self.stat['wins']),
+                "Loses: " + str(self.stat['loses']))
 
