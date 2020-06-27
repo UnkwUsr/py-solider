@@ -17,6 +17,7 @@ auto_bot = False
 def update():
     global auto_bot
     if pyxel.btnp(pyxel.KEY_A):
+        solider_game.toggleSuppressMsgs()
         auto_bot = not auto_bot
     if auto_bot:
         bot.checkBot()

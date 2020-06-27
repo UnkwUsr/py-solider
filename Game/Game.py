@@ -17,6 +17,8 @@ class Solider:
     """Main game class"""
 
     def __init__(self, map_width, map_height):
+        self.suppress_msg = False
+
         self.game_map = Map(map_width, map_height)
 
         self.restart()
@@ -33,10 +35,10 @@ class Solider:
 
     def move(self, direction):
         if self.isDied:
-            print(TEXT_YOU_DIED)
+            self.printMsg(TEXT_YOU_DIED)
             return
         elif self.isWinned:
-            print(TEXT_YOU_WINNED)
+            self.printMsg(TEXT_YOU_WINNED)
             return
 
         new_pos = deepcopy(self.pos)
@@ -50,14 +52,14 @@ class Solider:
             new_pos.up()
 
         if self.game_map.isSolid(new_pos):
-            print(TEXT_YOU_DIED)
+            self.printMsg(TEXT_YOU_DIED)
             self.isDied = True
         else:
             self.pos = deepcopy(new_pos)
             self.syncPlayer()
 
             if self.checkWin():
-                print(TEXT_YOU_WINNED)
+                self.printMsg(TEXT_YOU_WINNED)
                 self.isWinned = True
 
 
@@ -84,3 +86,10 @@ class Solider:
     def getMap(self):
         return self.game_map
 
+
+    def toggleSuppressMsgs(self):
+        self.suppress_msg = not self.suppress_msg
+
+    def printMsg(self, msg):
+        if not self.suppress_msg:
+            print(msg)
