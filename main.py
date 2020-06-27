@@ -3,11 +3,12 @@ from Game.Game import Solider
 from Game.Pos import Pos
 from Bot.Bot import Bot
 
+# WARNING: map 5x5 has points, from that we CAN'T win
+WIDTH=4
+HEIGHT=4
 
-WIDTH=5
-HEIGHT=5
-
-pyxel.init(WIDTH, HEIGHT)
+FPS_RATE=30
+pyxel.init(WIDTH, HEIGHT, fps=FPS_RATE)
 
 solider_game = Solider(WIDTH, HEIGHT)
 bot = Bot(solider_game)
