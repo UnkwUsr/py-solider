@@ -10,6 +10,8 @@ class Network:
             for input_n in self.input_layer:
                 n.setInputWeight(input_n, 1)
 
+        self.printNetwork()
+
     def process(self):
         output_values = []
         for n in self.output_layer:
@@ -19,17 +21,31 @@ class Network:
 
     def train(self, what_decided, isGood):
         if not isGood:
-            print("before train", self.process())
+            print("[Before train]", self.process())
             neuron_with_bad_value = self.output_layer[what_decided]
             posible_bad_inputs_weights = neuron_with_bad_value.inputs_weights
             prev_res = self.process()[what_decided]
+
+            neurons_to_modify = []
+
+            # find who need modify
             for n in posible_bad_inputs_weights:
                 prev_weight = posible_bad_inputs_weights[n]
                 posible_bad_inputs_weights[n] /= 2
                 new_res= self.process()[what_decided]
-                if new_res >= prev_res:
-                    posible_bad_inputs_weights[n] = prev_weight
-            print("after train", self.process())
+                if new_res < prev_res:
+                    neurons_to_modify.append({"n": n, "val": posible_bad_inputs_weights[n]})
+
+                # revert
+                posible_bad_inputs_weights[n] = prev_weight
+
+            # apply modifies to neurons
+            for a in neurons_to_modify:
+                posible_bad_inputs_weights[a["n"]] = a["val"]
+
+            print("[After train]", self.process())
+
+        self.printNetwork()
 
 
     def getSolution(self, input_data):
@@ -39,7 +55,6 @@ class Network:
 
         # has no possible solutions
         if max(output_values) == 0:
-            print("No posible solutions. We are trapped?")
             return -1
 
         possible_solutions = []
@@ -47,7 +62,6 @@ class Network:
             res = output_values[i]
             if res == max(output_values):
                 possible_solutions.append(i)
-        print("Posible solutions:", possible_solutions)
 
         solution = -1
         # has exactly one possible solution
@@ -55,6 +69,8 @@ class Network:
             solution = possible_solutions[0]
         # has more than one possible solutions
         else:
+            print("Possibles solutions:", possible_solutions)
+            # take random from possibles
             solution = possible_solutions[randint(0, len(possible_solutions) - 1)]
 
         return solution
@@ -69,6 +85,17 @@ class Network:
                 n.setValue(data[i])
 
 
+    # use with `watch cat net.status`
     def printNetwork(self):
-        # TODO: print graph of network wital all neurons
-        pass
+        with open("net.status", 'w') as net_file:
+            net_file.write("")
+
+            for out in self.output_layer:
+                net_file.write(makeUniqStr(out) + "\n")
+                for inp in out.inputs_weights:
+                    net_file.write("\t" + makeUniqStr(inp) + " weight: " + str(out.inputs_weights[inp]) + "\n")
+
+
+def makeUniqStr(a):
+    return str(id(a))
+
