@@ -8,8 +8,9 @@ class Vision:
         self.resetVision()
 
     def resetVision(self):
-        self.vision = {"left": 0, "right": 0, "up": 0, "down": 0,
-                "left_up": 0, "left_down": 0, "right_up": 0, "right_down": 0}
+        # mnemonic: unit circle
+        self.vision = {"right": 0, "up": 0, "left": 0, "down": 0,
+                "right_up": 0, "left_up": 0, "left_down": 0, "right_down": 0}
 
     def getVision(self):
         return self.vision
@@ -28,10 +29,6 @@ class Vision:
         pos_view = self.game.pos
 
         pos = deepcopy(pos_view)
-        mov = lambda p: p.left()
-        while self.visionMove(pos, mov):
-            self.vision["left"] += 1
-        pos = deepcopy(pos_view)
         mov = lambda p: p.right()
         while self.visionMove(pos, mov):
             self.vision["right"] += 1
@@ -40,10 +37,18 @@ class Vision:
         while self.visionMove(pos, mov):
             self.vision["up"] += 1
         pos = deepcopy(pos_view)
+        mov = lambda p: p.left()
+        while self.visionMove(pos, mov):
+            self.vision["left"] += 1
+        pos = deepcopy(pos_view)
         mov = lambda p: p.down()
         while self.visionMove(pos, mov):
             self.vision["down"] += 1
 
+        pos = deepcopy(pos_view)
+        mov = lambda p: ([p.right(), pos.up()])
+        while self.visionMove(pos, mov):
+            self.vision["right_up"] += 1
         pos = deepcopy(pos_view)
         mov = lambda p: ([p.left(), pos.up()])
         while self.visionMove(pos, mov):
@@ -52,10 +57,6 @@ class Vision:
         mov = lambda p: ([p.left(), pos.down()])
         while self.visionMove(pos, mov):
             self.vision["left_down"] += 1
-        pos = deepcopy(pos_view)
-        mov = lambda p: ([p.right(), pos.up()])
-        while self.visionMove(pos, mov):
-            self.vision["right_up"] += 1
         pos = deepcopy(pos_view)
         mov = lambda p: ([p.right(), pos.down()])
         while self.visionMove(pos, mov):
