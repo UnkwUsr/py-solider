@@ -27,11 +27,18 @@ class Solider:
         self.isDied = False
         self.isWinned = False
         self.game_map.reset()
-        #with borders
-        # self.pos = Pos(randint(1, map_width - 2), randint(1, map_height - 2))
-        self.pos = Pos(randint(0, self.game_map.width - 1), randint(0, self.game_map.height - 1))
+        # save start pos for ability to 'replay'
+        self.start_pos = Pos(randint(0, self.game_map.width - 1), randint(0, self.game_map.height - 1))
+        self.pos = self.start_pos
         self.syncPlayer(init=True)
 
+    # as restart, but do not change start position
+    def replay(self):
+        self.isDied = False
+        self.isWinned = False
+        self.game_map.reset()
+        self.pos = self.start_pos
+        self.syncPlayer(init=True)
 
     def move(self, direction):
         if self.isDied:

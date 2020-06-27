@@ -33,6 +33,8 @@ def update():
 
     if pyxel.btnp(pyxel.KEY_R):
         solider_game.restart()
+    if pyxel.btnp(pyxel.KEY_E):
+        solider_game.replay()
 
     if pyxel.btnp(pyxel.KEY_V):
         print(bot.getVision())
