@@ -15,6 +15,7 @@ bot = Bot(solider_game)
 auto_bot = False
 
 def update():
+    global bot
     global auto_bot
     if pyxel.btnp(pyxel.KEY_A):
         solider_game.toggleSuppressMsgs()
@@ -40,6 +41,9 @@ def update():
         print(bot.getVision())
     if pyxel.btnp(pyxel.KEY_B):
         bot.checkBot()
+    if pyxel.btnp(pyxel.KEY_C):
+        # reset bot network
+        bot = Bot(solider_game)
 
 def draw():
     pyxel.cls(0)
