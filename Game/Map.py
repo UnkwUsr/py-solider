@@ -21,16 +21,16 @@ class Map:
     def reset(self):
         self.map = [[Block.EMPTY for x in range(self.width)] for y in range(self.height)]
 
-    def set(self, pos, block):
+    def set_block(self, pos, block):
         self.map[pos.y][pos.x] = block
 
-    def get(self, pos):
+    def get_block(self, pos):
         return self.map[pos.y][pos.x]
 
     def isSolid(self, pos):
         if (pos.x < 0 or pos.x > self.width - 1 or
                 pos.y < 0 or pos.y > self.height - 1 or
-                self.get(pos) != Block.EMPTY):
+                self.get_block(pos) != Block.EMPTY):
             return True
         else:
             return False
@@ -54,3 +54,4 @@ class MapIterator:
             return pos
 
         raise StopIteration
+

@@ -17,12 +17,15 @@ auto_bot = False
 def update():
     global bot
     global auto_bot
+
+    # a - toggle bot auto play
     if pyxel.btnp(pyxel.KEY_A):
         solider_game.toggleSuppressMsgs()
         auto_bot = not auto_bot
     if auto_bot:
         bot.checkBot()
 
+    # h,j,k,l - control
     if pyxel.btnp(pyxel.KEY_H):
         solider_game.move("left")
     if pyxel.btnp(pyxel.KEY_L):
@@ -32,28 +35,29 @@ def update():
     if pyxel.btnp(pyxel.KEY_K):
         solider_game.move("up")
 
+    # r - restart
+    # e - replay
     if pyxel.btnp(pyxel.KEY_R):
         solider_game.restart()
     if pyxel.btnp(pyxel.KEY_E):
         solider_game.replay()
 
+    # v - print bot vision
+    # b - do one step by bot
+    # c - reset bot learning progress
     if pyxel.btnp(pyxel.KEY_V):
         print(bot.getVision())
     if pyxel.btnp(pyxel.KEY_B):
         bot.checkBot()
     if pyxel.btnp(pyxel.KEY_C):
-        # reset bot network
+        # reset bot
         bot = Bot(solider_game)
 
 def draw():
     pyxel.cls(0)
     game_map = solider_game.getMap()
     for pos in game_map:
-        pyxel.pset(pos.x, pos.y, game_map.get(pos).value)
-
-    # for y in range(WIDTH):
-        # for x in range(HEIGHT):
-            # t = Pos(x, y)
-            # pyxel.pset(x, y, game_map.get(t).value)
+        pyxel.pset(pos.x, pos.y, game_map.get_block(pos).value)
 
 pyxel.run(update, draw)
+

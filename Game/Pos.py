@@ -11,3 +11,4 @@ class Pos:
         self.y -= count
     def down(self, count=1):
         self.y += count
+
