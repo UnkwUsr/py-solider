@@ -1,37 +1,38 @@
 from .Vision import Vision
 from .Network import Network
+from enum import Enum
 
 class Bot:
     def __init__(self, game):
-        self.stat = {'wins': 0, 'loses': 0, 'stucks': 0}
+        self.stat = {'wins': 0, 'loses': 0}
 
         self.game = game
         self.vision = Vision(game)
 
         self.network = Network(8, 4)
 
-    def doMoveNum(self, move_num):
+    def doBotMove(self, move):
         move_name = ""
-        if move_num == 0:
+        if move == 0:
             move_name = "right"
-        elif move_num == 1:
+        elif move == 1:
             move_name = "up"
-        elif move_num == 2:
+        elif move == 2:
             move_name = "left"
-        elif move_num == 3:
+        elif move == 3:
             move_name = "down"
         else:
-            print("Error. Count of network outputs was changed?")
+            print("Unreachable error. Wrong count of network outputs?")
             return
 
         self.game.move(move_name)
         if self.game.isDied:
-            return -1
+            return BotMoveResult.DIED
         elif self.game.isWinned:
-            return 1
+            return BotMoveResult.WIN
         # game continuing
         else:
-            return 0
+            return BotMoveResult.CONTINUE
 
 
     def getVision(self):
@@ -39,9 +40,10 @@ class Bot:
         vis = self.vision.getVision()
         return vis
 
-    def checkBot(self):
+    def bot_step(self):
         vis = self.getVision()
         vis_data = [vis[i] for i in vis]
+        # TODO: remove normalizing because is less efficient
         # normalize vis
         for i in range(len(vis_data)):
             if vis_data[i] > 1:
@@ -49,40 +51,43 @@ class Bot:
 
         network_solution = self.network.getSolution(vis_data)
         if network_solution == -1:
-            # print("Bot say that no possible solutions. Restarting")
+            # print("Bot say there no possible solutions. Restarting")
 
             # be careful! map 5x5 has start-positions from that win not possible
             self.stat['loses'] += 1
             self.printStats()
 
-            # there need to be some training stuff
+            print("TODO: there need to be some training stuff")
 
             self.game.replay()
-            return
+        else:
+            move_result = self.doBotMove(network_solution)
 
-        move_result = self.doMoveNum(network_solution)
+            # is continuing playing
+            if move_result == BotMoveResult.CONTINUE:
+                pass
+            # is win
+            elif move_result == BotMoveResult.WIN:
+                self.stat['wins'] += 1
+                self.printStats()
 
-        # is continuing playing
-        if move_result == 0:
-            pass
-            # self.network.train(network_solution, True)
-        # is win
-        elif move_result == 1:
-            self.stat['wins'] += 1
-            self.printStats()
+                self.network.train(network_solution, True)
+                self.game.restart()
+            # is died
+            elif move_result == BotMoveResult.DIED:
+                self.stat['loses'] += 1
+                self.printStats()
 
-            self.network.train(network_solution, True)
-            self.game.restart()
-        # is died
-        elif move_result == -1:
-            self.stat['loses'] += 1
-            self.printStats()
-
-            self.network.train(network_solution, False)
-            self.game.replay()
+                self.network.train(network_solution, False)
+                self.game.replay()
 
 
     def printStats(self):
         print("Wins: " + str(self.stat['wins']),
                 "Loses: " + str(self.stat['loses']))
+
+class BotMoveResult(Enum):
+    DIED = 0
+    WIN = 1
+    CONTINUE = 2
 

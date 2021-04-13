@@ -12,18 +12,18 @@ pyxel.init(WIDTH, HEIGHT, fps=FPS_RATE)
 
 solider_game = Solider(WIDTH, HEIGHT)
 bot = Bot(solider_game)
-auto_bot = False
+bot_auto_play = False
 
 def update():
     global bot
-    global auto_bot
+    global bot_auto_play
 
     # a - toggle bot auto play
     if pyxel.btnp(pyxel.KEY_A):
         solider_game.toggleSuppressMsgs()
-        auto_bot = not auto_bot
-    if auto_bot:
-        bot.checkBot()
+        bot_auto_play = not bot_auto_play
+    if bot_auto_play:
+        bot.bot_step()
 
     # h,j,k,l - control
     if pyxel.btnp(pyxel.KEY_H):
@@ -48,7 +48,7 @@ def update():
     if pyxel.btnp(pyxel.KEY_V):
         print(bot.getVision())
     if pyxel.btnp(pyxel.KEY_B):
-        bot.checkBot()
+        bot.bot_step()
     if pyxel.btnp(pyxel.KEY_C):
         # reset bot
         bot = Bot(solider_game)

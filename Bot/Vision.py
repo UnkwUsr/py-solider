@@ -8,7 +8,7 @@ class Vision:
         self.resetVision()
 
     def resetVision(self):
-        # mnemonic: unit circle
+        # mnemonic for sides direction: unit circle
         self.vision = {"right": 0, "up": 0, "left": 0, "down": 0,
                 "right_up": 0, "left_up": 0, "left_down": 0, "right_down": 0}
 
@@ -23,7 +23,7 @@ class Vision:
             return True
 
     def update(self):
-        """return list with distance to solid blocks for 8 directions"""
+        """return list with distances to solid blocks for 8 directions"""
 
         self.resetVision()
         pos_view = self.game.pos
