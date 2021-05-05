@@ -1,4 +1,3 @@
-from random import randint
 from .Neuron import Neuron
 from .InputNeuron import InputNeuron
 
@@ -31,7 +30,7 @@ class Network:
             # find who need modify
             for n in posible_bad_inputs_weights:
                 prev_weight = posible_bad_inputs_weights[n]
-                posible_bad_inputs_weights[n] /= 2
+                posible_bad_inputs_weights[n] /= 1.1
                 new_res= self.process()[what_decided]
                 if new_res < prev_res:
                     neurons_to_modify.append({"n": n, "val": posible_bad_inputs_weights[n]})
@@ -44,18 +43,20 @@ class Network:
                 posible_bad_inputs_weights[a["n"]] = a["val"]
 
             print("[After train]", self.process())
+        else:
+            print("TODO: maybe do some train on good step")
 
         self.printNetwork()
 
 
-    def getSolution(self, input_data):
+    def getSolutions(self, input_data):
         self.setDataInputLayer(input_data)
 
         output_values = self.process()
 
         # has no possible solutions
         if max(output_values) == 0:
-            return -1
+            return []
 
         possible_solutions = []
         for i in range(len(output_values)):
@@ -63,17 +64,8 @@ class Network:
             if res == max(output_values):
                 possible_solutions.append(i)
 
-        solution = -1
-        # has exactly one possible solution
-        if len(possible_solutions) == 1:
-            solution = possible_solutions[0]
-        # has more than one possible solutions
-        else:
-            print("Possibles solutions:", possible_solutions)
-            # take random from possibles
-            solution = possible_solutions[randint(0, len(possible_solutions) - 1)]
 
-        return solution
+        return possible_solutions
 
 
     def setDataInputLayer(self, data):

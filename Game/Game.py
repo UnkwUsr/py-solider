@@ -4,8 +4,8 @@ from .Pos import Pos
 from .Map import Map
 from .Blocks import Block
 
-TEXT_YOU_DIED = "You died. Restart (default key r) for continue"
-TEXT_YOU_WINNED = "You winned. Please restart (default key r) for continue"
+TEXT_YOU_DIED = "You died. Restart (key r) or replay (key e)"
+TEXT_YOU_WINNED = "You winned. Restart (key r) or replay (key e)"
 
 class Solider:
     """Main game class"""

@@ -1,3 +1,4 @@
+from random import randint
 from .Vision import Vision
 from .Network import Network
 from enum import Enum
@@ -22,7 +23,7 @@ class Bot:
         elif move == 3:
             move_name = "down"
         else:
-            print("Unreachable error. Wrong count of network outputs?")
+            print("Unreachable error. Wrong count of network outputs?", "move_id = ", move)
             return
 
         self.game.move(move_name)
@@ -37,49 +38,86 @@ class Bot:
 
     def getVision(self):
         self.vision.update()
-        vis = self.vision.getVision()
-        return vis
 
-    def bot_step(self):
-        vis = self.getVision()
-        vis_data = [vis[i] for i in vis]
-        # TODO: remove normalizing because is less efficient
+        vis = self.vision.getVision()
+
         # normalize vis
+        vis_data = [vis[i] for i in vis]
         for i in range(len(vis_data)):
             if vis_data[i] > 1:
                 vis_data[i] = 1
 
-        network_solution = self.network.getSolution(vis_data)
+        return vis_data
+
+    def bot_step(self):
+        network_solution = self.get_solution_from_network()
+
         if network_solution == -1:
+            return
+
+        # there not exactly one solution. Starting trying each possible solution
+        # if network_solution == -2:
+        #     return
+
+        move_result = self.doBotMove(network_solution)
+
+        # is continuing playing
+        if move_result == BotMoveResult.CONTINUE:
+            self.is_obscure_moment = False
+
+            pass
+        # is win
+        elif move_result == BotMoveResult.WIN:
+            self.is_obscure_moment = False
+            # we are win, so restore predefined_solution_id
+            self.predefined_solution_id = -1
+
+            self.stat['wins'] += 1
+            self.printStats()
+
+            self.network.train(network_solution, True)
+            self.game.restart()
+        # is died
+        elif move_result == BotMoveResult.DIED:
+            self.stat['loses'] += 1
+            self.printStats()
+
+            self.network.train(network_solution, False)
+            self.game.replay()
+
+
+    def get_solution_from_network(self):
+        vis_data = self.getVision()
+
+        possible_solutions = self.network.getSolutions(vis_data)
+        network_solution = -1
+        # has exactly one possible solution
+
+        if len(possible_solutions) == 0:
             # print("Bot say there no possible solutions. Restarting")
 
             # be careful! map 5x5 has start-positions from that win not possible
             self.stat['loses'] += 1
             self.printStats()
 
-            print("TODO: there need to be some training stuff")
+            print("TODO: there need to be some training stuff for no possible solutions")
 
             self.game.replay()
+            return -1
+
+        if len(possible_solutions) == 1:
+            network_solution = possible_solutions[0]
+        # has more than one possible solution
         else:
-            move_result = self.doBotMove(network_solution)
+            # try each solution and find what is good
+            # self.possible_solutions = possible_solutions
+            # self.predefined_solution_id = 0
 
-            # is continuing playing
-            if move_result == BotMoveResult.CONTINUE:
-                pass
-            # is win
-            elif move_result == BotMoveResult.WIN:
-                self.stat['wins'] += 1
-                self.printStats()
+            # return -2
 
-                self.network.train(network_solution, True)
-                self.game.restart()
-            # is died
-            elif move_result == BotMoveResult.DIED:
-                self.stat['loses'] += 1
-                self.printStats()
+            return possible_solutions[randint(0, len(possible_solutions) - 1)]
 
-                self.network.train(network_solution, False)
-                self.game.replay()
+        return network_solution
 
 
     def printStats(self):
