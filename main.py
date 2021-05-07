@@ -7,7 +7,7 @@ from Bot.Bot import Bot
 WIDTH=4
 HEIGHT=4
 
-FPS_RATE=1000
+FPS_RATE=10000
 pyxel.init(WIDTH, HEIGHT, fps=FPS_RATE)
 
 solider_game = Solider(WIDTH, HEIGHT)

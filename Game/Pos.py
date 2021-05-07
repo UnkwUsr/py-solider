@@ -12,3 +12,6 @@ class Pos:
     def down(self, count=1):
         self.y += count
 
+    def __str__(self):
+        return "(" + str(self.x) + ", " + str(self.y) + ")"
+

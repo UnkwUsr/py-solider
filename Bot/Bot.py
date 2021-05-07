@@ -10,7 +10,8 @@ class Bot:
         self.game = game
         self.vision = Vision(game)
 
-        self.network = Network(8, 4)
+        # we ignore current player position, so inputs number is 16 -1
+        self.network = Network(16, 4)
 
     def doBotMove(self, move):
         move_name = ""
@@ -37,17 +38,8 @@ class Bot:
 
 
     def getVision(self):
-        self.vision.update()
+        return self.vision.getMapStateRelatedToCurrentPosition()
 
-        vis = self.vision.getVision()
-
-        # normalize vis
-        vis_data = [vis[i] for i in vis]
-        for i in range(len(vis_data)):
-            if vis_data[i] > 1:
-                vis_data[i] = 1
-
-        return vis_data
 
     def bot_step(self):
         network_solution = self.get_solution_from_network()
@@ -75,14 +67,13 @@ class Bot:
             self.stat['wins'] += 1
             self.printStats()
 
-            self.network.train(network_solution, True)
             self.game.restart()
         # is died
         elif move_result == BotMoveResult.DIED:
             self.stat['loses'] += 1
             self.printStats()
 
-            self.network.train(network_solution, False)
+            self.network.train_on_error(network_solution)
             self.game.replay()
 
 
@@ -115,6 +106,7 @@ class Bot:
 
             # return -2
 
+            print("pick random from:", possible_solutions)
             return possible_solutions[randint(0, len(possible_solutions) - 1)]
 
         return network_solution
