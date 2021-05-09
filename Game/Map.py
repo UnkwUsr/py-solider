@@ -25,15 +25,16 @@ class Map:
         self.map[pos.y][pos.x] = block
 
     def get_block(self, pos):
+        if (pos.x < 0 or pos.x > self.width - 1 or
+                pos.y < 0 or pos.y > self.height - 1):
+            return Block.DRAWED
         return self.map[pos.y][pos.x]
 
     def isSolid(self, pos):
-        if (pos.x < 0 or pos.x > self.width - 1 or
-                pos.y < 0 or pos.y > self.height - 1 or
-                self.get_block(pos) != Block.EMPTY):
+        if self.get_block(pos) != Block.EMPTY:
             return True
-        else:
-            return False
+
+        return False
 
 class MapIterator:
     def __init__(self, game_map):

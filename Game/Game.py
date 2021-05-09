@@ -43,14 +43,7 @@ class Solider:
             return
 
         new_pos = deepcopy(self.pos)
-        if direction == "left":
-            new_pos.left()
-        if direction == "right":
-            new_pos.right()
-        if direction == "down":
-            new_pos.down()
-        if direction == "up":
-            new_pos.up()
+        new_pos.move(direction)
 
         if self.game_map.isSolid(new_pos):
             self.printMsg(TEXT_YOU_DIED)
