@@ -1,13 +1,13 @@
 from enum import Enum
 
 class Block(Enum):
-    EMPTY = 0
+    EMPTY = 7
 
-    PLAYER = 1
-    WINNER = 6
+    PLAYER = 5
+    WINNER = 1
     DIED = 8
 
     BORDER = 3
     START = 4
-    DRAWED = 5
+    DRAWED = 0
 

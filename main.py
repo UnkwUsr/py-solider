@@ -1,5 +1,6 @@
 import pyxel
 from Game.Game import Solider
+from Game.Blocks import Block
 from Game.Pos import Pos, Sides
 from Bot.Bot import Bot
 
@@ -8,7 +9,7 @@ from Bot.Bot import Bot
 WIDTH=4
 HEIGHT=4
 
-FPS_RATE=1000
+FPS_RATE=30
 pyxel.init(WIDTH, HEIGHT, fps=FPS_RATE)
 
 solider_game = Solider(WIDTH, HEIGHT)
@@ -48,7 +49,7 @@ def update():
         bot.bot_step()
 
 def draw():
-    pyxel.cls(0)
+    pyxel.cls(Block.EMPTY.value)
     game_map = solider_game.getMap()
     for pos in game_map:
         pyxel.pset(pos.x, pos.y, game_map.get_block(pos).value)
