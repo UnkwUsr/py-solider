@@ -1,6 +1,5 @@
 from random import randint
-from .Vision import Vision
-from Game.Pos import side_opposite
+from Game.Pos import side_opposite, Sides
 import os
 
 class Bot:
@@ -8,35 +7,46 @@ class Bot:
         self.game = game
         self.map = self.game.game_map
 
-        self.vision = Vision(self.game)
-
     def bot_step(self):
         if self.game.isWinned:
             self.game.restart()
             return
 
-        self.vision.count_sides()
-        sides = {x: y for x, y in self.vision.sides.items() if y != 0}
+        sides = self.count_sides()
+        sides = {side: num for side, num in sides.items() if num != 0}
 
         if not sides:
-            # print("Lose. (unreachable if all works correct)")
+            print("unreachable (no sides to move to)")
             return
 
-        s = self.find_best_step(sides)
+        side = self.find_best_side(sides)
+        self.game.move(side)
 
-        self.game.move(s)
+    def find_best_side(self, sides):
+        result = list(sides)[0]
 
-    def find_best_step(self, sides):
-        r = list(sides)[0]
-
-        for s in sides:
-            if sides[s] < sides[r]:
-                r = s
+        for side in sides:
+            if sides[side] < sides[result]:
+                result = side
                 continue
 
-            if sides[s] == sides[r]:
-                if side_opposite(s) in sides:
-                    r = s
+            if sides[side] == sides[result]:
+                if side_opposite(side) in sides:
+                    result = side
 
-        return r
+        return result
+
+    def count_sides(self):
+        sides = dict()
+        for side in Sides:
+            sides[side] = 0
+
+        for side in Sides:
+            pos = self.game.pos.copy()
+            pos.move(side)
+            while not self.map.isSolid(pos):
+                pos.move(side)
+                sides[side] += 1
+
+        return sides
 
